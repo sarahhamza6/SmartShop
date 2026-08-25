@@ -1,11 +1,12 @@
 package com.smartshop.backend.controller;
 
-import com.smartshop.backend.dto.PlanRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.smartshop.backend.dto.PlanRequest;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -20,7 +21,7 @@ public class PlanController {
             int calories = Integer.parseInt(planRequest.getCalories());
             int protein = Integer.parseInt(planRequest.getProtein());
 
-            if (budget <= 0) {
+            if (budget < 1) {
                 return ResponseEntity.badRequest().body("Budget must be greater than 0.");
             }
 
@@ -28,11 +29,11 @@ public class PlanController {
                 return ResponseEntity.badRequest().body("Days must be between 1 and 7.");
             }
 
-            if (calories <= 0) {
+            if (calories < 1) {
                 return ResponseEntity.badRequest().body("Calories must be greater than 0.");
             }
 
-            if (protein <= 0) {
+            if (protein < 1) {
                 return ResponseEntity.badRequest().body("Protein must be greater than 0.");
             }
 
