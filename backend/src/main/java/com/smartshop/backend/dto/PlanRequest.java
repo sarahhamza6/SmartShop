@@ -9,6 +9,8 @@ public class PlanRequest {
     private MealSelection meals;
     private String[] dietaryRequirements;
     private String allergies;
+    private String supermarket;
+    private String people;
 
 
     public PlanRequest() {
@@ -70,5 +72,21 @@ public class PlanRequest {
 
     public void setAllergies(String allergies) {
         this.allergies = allergies;
+    }
+
+    public String getSupermarket(){
+        return supermarket;
+    }
+
+    public void setSupermarket(String supermarket){
+        this.supermarket = supermarket;
+    }
+
+     public String getPeople(){
+        return people;
+    }
+
+    public void setPeople(String people){
+        this.people = people;
     }
 }

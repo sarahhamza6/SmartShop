@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  ScrollView,
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import { Spacing } from "@/constants/theme";
 
 export default function PlanScreen() {
   // 1. STATE GOES HERE
@@ -15,6 +24,8 @@ export default function PlanScreen() {
   const [allergies, setAllergies] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [people, setPeople] = useState("");
+  const [supermarket, setSupermarket] = useState("");
 
   // 2. FUNCTIONS GO HERE
   function toggleDietaryRequirement(requirement: string) {
@@ -41,13 +52,17 @@ export default function PlanScreen() {
       },
       dietaryRequirements,
       allergies,
+      supermarket,
+      people,
     };
+    console.log("SENDING:", planRequest);
 
     //Convert input to numbers
     const daysNom = Number(days);
     const budgetNom = Number(budget);
     const caloriesNom = Number(calories);
     const proteinNom = Number(protein);
+    const peopleNom = Number(people);
 
     if (!budget || !days || !calories || !protein) {
       setSuccessMessage("");
@@ -55,13 +70,13 @@ export default function PlanScreen() {
       return;
     }
 
-    if (budgetNom < 1 ){
-      setErrorMessage("Budget must be greater than 1")
+    if (budgetNom < 1) {
+      setErrorMessage("Budget must be greater than 1");
       setSuccessMessage("");
       return;
     }
 
-    if (daysNom < 1 || daysNom > 7){
+    if (daysNom < 1 || daysNom > 7) {
       setErrorMessage("Days must be between 1 and 7");
       setSuccessMessage("");
       return;
@@ -78,7 +93,13 @@ export default function PlanScreen() {
       setSuccessMessage("");
       return;
     }
+    if (peopleNom < 1 || peopleNom > 10) {
+      setErrorMessage("People must be between 1 and 10");
+      setSuccessMessage("");
+      return;
+    }
 
+    
 
     try {
       const response = await fetch("http://localhost:8080/api/plans", {
@@ -101,9 +122,6 @@ export default function PlanScreen() {
       setErrorMessage("");
 
       console.log(data);
-      
-
-
     } catch (error) {
       console.error(error);
       setErrorMessage("Unable to connect to the server. Please try again.");
@@ -113,13 +131,12 @@ export default function PlanScreen() {
 
   // 3. UI GOES INSIDE RETURN
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Plan Your Week</Text>
 
       <Text>
         This is where we will collect your budget, nutrition goals and meals.
       </Text>
-
       <Text style={styles.label}>Weekly budget</Text>
       <TextInput
         style={styles.input}
@@ -246,45 +263,76 @@ export default function PlanScreen() {
         placeholder="e.g. peanuts, shellfish"
       />
 
+      <Text style={styles.sectionTitle}>Supermarket</Text>
+
+      <Picker
+        selectedValue={supermarket}
+        onValueChange={(value) => setSupermarket(value)}
+      >
+        <Picker.Item label="Select a supermarket" value="" />
+        <Picker.Item label="Tesco" value="Tesco" />
+        <Picker.Item label="Aldi" value="Aldi" />
+        <Picker.Item label="Morrisons" value="Morrisons" />
+        <Picker.Item label="Sainsbury's" value="Sainsbury's" />
+        <Picker.Item label="Asda" value="Asda" />
+      </Picker>
+
+      <Text style={styles.sectionTitle}>How many people?</Text>
+
+      <TextInput
+        style={styles.input}
+        value={people}
+        onChangeText={setPeople}
+      ></TextInput>
+
       {Boolean(errorMessage) && <Text>{errorMessage}</Text>}
       {Boolean(successMessage) && <Text>{successMessage}</Text>}
 
       <Pressable style={styles.continueButton} onPress={handleContinue}>
         <Text style={styles.continueButtonText}>Continue</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 24,
+    paddingBottom: 40,
   },
 
   title: {
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 8,
+  },
+
+  subtitle: {
+    fontSize: 16,
+    marginBottom: 24,
   },
 
   label: {
-    marginTop: 20,
-    marginBottom: 8,
+    fontSize: 15,
+    fontWeight: "600",
+    marginBottom: 6,
   },
 
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    marginBottom: 16,
+    fontSize: 16,
   },
 
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "600",
-    marginTop: 24,
-    marginBottom: 8,
+    marginTop: 20,
+    marginBottom: 10,
   },
 
   mealOption: {
@@ -300,27 +348,27 @@ const styles = StyleSheet.create({
   },
 
   continueButton: {
-    borderRadius: 8,
-    padding: 14,
     marginTop: 24,
-    backgroundColor: "#ddd",
+    paddingVertical: 15,
+    borderRadius: 12,
     alignItems: "center",
   },
 
   continueButtonText: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "600",
   },
 
   optionButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 14,
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    marginRight: 8,
     marginBottom: 8,
   },
 
   optionButtonSelected: {
-    borderWidth: 2,
+    borderWidth: 3,
   },
 });
