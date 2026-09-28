@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { Spacing } from "@/constants/theme";
+import { router } from "expo-router";
 
 export default function PlanScreen() {
   // 1. STATE GOES HERE
@@ -26,6 +27,7 @@ export default function PlanScreen() {
   const [successMessage, setSuccessMessage] = useState("");
   const [people, setPeople] = useState("");
   const [supermarket, setSupermarket] = useState("");
+  
 
   // 2. FUNCTIONS GO HERE
   function toggleDietaryRequirement(requirement: string) {
@@ -116,7 +118,12 @@ export default function PlanScreen() {
         return;
       }
 
-      const data = await response.json();
+      const data = await response.text();
+      
+      router.push({
+        pathname: "/results",
+        params: { aiPlan: data },
+      });
 
       setSuccessMessage("Success! Conected to the server");
       setErrorMessage("");

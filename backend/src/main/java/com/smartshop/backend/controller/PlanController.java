@@ -5,16 +5,16 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.smartshop.backend.service.AiService;
 
 import com.smartshop.backend.dto.PlanRequest;
+import com.smartshop.backend.service.AiService;
 
 @RestController
 @CrossOrigin(origins = "*")
 public class PlanController {
 
     private final AiService aiService;
-    
+
     public PlanController(AiService aiService) {
     this.aiService = aiService;
 }
@@ -49,7 +49,10 @@ public class PlanController {
                 return ResponseEntity.badRequest().body("People must be greater than 0.");
             }
 
-            return ResponseEntity.ok(planRequest);
+            
+
+            String aiPlan = aiService.generatePlan(planRequest);
+            return ResponseEntity.ok(aiPlan);
 
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest()
